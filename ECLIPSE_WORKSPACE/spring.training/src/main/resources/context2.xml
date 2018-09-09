@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<bean name="dao_1" class="spring.training.dao.impl.JdbcProductDao">
+		<!-- constructor injection -->
+		<!-- sequence of these must match sequence of constructor arguments -->
+		<constructor-arg value="org.h2.Driver" />
+		<constructor-arg value="jdbc:h2:tcp://localhost/~/unisys_training_sep_18" />
+		<constructor-arg value="sa" />
+		<constructor-arg value="" />
+	</bean>
+
+
+	<bean name="dao_2" class="spring.training.dao.impl.JdbcProductDao">
+		<!-- property or setter injection -->
+		<!-- sequence does not matter -->
+		<!-- invokes appropriate setter function -->
+		<property name="driver" value="org.h2.Driver" /> <!-- invokes setDriver(..) -->
+		<property name="password" value="" />
+		<property name="username" value="sa" />
+		<property name="url" value="jdbc:h2:tcp://localhost/~/unisys_training_sep_18" />
+	</bean>
+	
+	<bean name="dbcp,dataSource" class="org.apache.commons.dbcp2.BasicDataSource">
+		<!-- invoke the setters (refer Java docs) -->
+		<property name="driverClassName" value="org.h2.Driver" />
+		<property name="password" value="" />
+		<property name="username" value="sa" />
+		<property name="url" value="jdbc:h2:tcp://localhost/~/unisys_training_sep_18" />
+		
+		<property name="initialSize" value="10" />
+		<property name="maxTotal" value="100" />
+		<property name="minIdle" value="50" />
+		<property name="maxIdle" value="50" />
+		<property name="maxWaitMillis" value="2000" />
+	</bean>
+
+	<bean name="dao" class="spring.training.dao.impl.JdbcProductDao">
+		<!-- This bean has a private field "dataSource", which is a dependency -->
+		<!-- We want to assign the object "dbcp" defined above, to this field -->
+		<!-- This process is called wiring. Can be manual or auto -->
+		
+		<!-- manual wiring using constructor-injection -->
+		<!-- <constructor-arg ref="dataSource" /> -->
+		
+		<!-- manual wiring using property-injection -->
+		<property name="dataSource" ref="dbcp" /> <!-- invokes setDataSource(..)  -->
+	</bean>
+
+</beans>
+
+
+
+
+
+
+
+
+
+
+
+
