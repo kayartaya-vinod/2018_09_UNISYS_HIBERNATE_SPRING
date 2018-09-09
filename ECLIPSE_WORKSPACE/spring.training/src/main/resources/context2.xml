@@ -42,7 +42,7 @@
 		<property name="maxWaitMillis" value="2000" />
 	</bean>
 
-	<bean name="dao" class="spring.training.dao.impl.JdbcProductDao">
+	<bean name="dao" class="spring.training.dao.impl.JdbcProductDao" autowire="byType">
 		<!-- This bean has a private field "dataSource", which is a dependency -->
 		<!-- We want to assign the object "dbcp" defined above, to this field -->
 		<!-- This process is called wiring. Can be manual or auto -->
@@ -51,7 +51,7 @@
 		<!-- <constructor-arg ref="dataSource" /> -->
 		
 		<!-- manual wiring using property-injection -->
-		<property name="dataSource" ref="dbcp" /> <!-- invokes setDataSource(..)  -->
+		<!-- <property name="dataSource" ref="dbcp" /> --> <!-- invokes setDataSource(..)  -->
 	</bean>
 
 </beans>

@@ -7,9 +7,13 @@ import java.sql.ResultSet;
 
 import javax.sql.DataSource;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import spring.training.dao.DaoException;
 import spring.training.dao.ProductDao;
 
+@Component("dao")
 public class JdbcProductDao implements ProductDao {
 
 	private String driver;
@@ -17,8 +21,9 @@ public class JdbcProductDao implements ProductDao {
 	private String username;
 	private String password;
 
+	@Autowired(required = false)
 	private DataSource dataSource; // import from javax.sql package
-	
+
 	// spring uses this constructor by default when creating an object
 	// from an XML configuration
 	public JdbcProductDao() {
@@ -32,8 +37,6 @@ public class JdbcProductDao implements ProductDao {
 		this.username = username;
 		this.password = password;
 	}
-	
-	
 
 	public JdbcProductDao(DataSource dataSource) {
 		this.dataSource = dataSource;
@@ -57,17 +60,25 @@ public class JdbcProductDao implements ProductDao {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	
+
 	public void setDataSource(DataSource dataSource) {
+		System.out.println("setDataSource() called...");
 		this.dataSource = dataSource;
 	}
-	
+
+	// writable property called "dbcp", spring can use this for injecting value of
+	// type DataSource
+	public void setDbcp(DataSource dataSource) {
+		System.out.println("setDbcp() called...");
+		this.dataSource = dataSource;
+	}
+
 	private Connection createConnection() throws Exception {
-		
-		if(dataSource!=null) {
+
+		if (dataSource != null) {
 			return dataSource.getConnection(); // a connection from the pool
 		}
-		
+
 		Class.forName(driver);
 		return DriverManager.getConnection(url, username, password);
 	}
@@ -75,21 +86,14 @@ public class JdbcProductDao implements ProductDao {
 	@Override
 	public int count() throws DaoException {
 		String sql = "select count(*) from products";
-		try(
-			Connection conn = createConnection();
-			PreparedStatement stmt = conn.prepareStatement(sql);
-			ResultSet rs = stmt.executeQuery();
-		){
+		try (Connection conn = createConnection();
+				PreparedStatement stmt = conn.prepareStatement(sql);
+				ResultSet rs = stmt.executeQuery();) {
 			rs.next();
 			return rs.getInt(1);
-		} catch(Exception ex) {
+		} catch (Exception ex) {
 			throw new DaoException(ex);
 		}
 	}
 
 }
-
-
-
-
-
